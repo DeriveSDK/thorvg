@@ -292,6 +292,24 @@ public:
      */
     Result bounds(float* x, float* y, float* w, float* h) const noexcept;
 
+
+    /**
+     * @brief Gets the bounding box of the paint object before any transformation.
+     *
+     * @param[out] x The x coordinate of the upper left corner of the object.
+     * @param[out] y The y coordinate of the upper left corner of the object.
+     * @param[out] w The width of the object.
+     * @param[out] h The height of the object.
+     *
+     * @return Result::Success when succeed, Result::InsufficientCondition otherwise.
+     *
+     * @note The bounding box doesn't indicate the final rendered region. It's the smallest rectangle that encloses the object.
+     * 
+     * @BETA_API
+     */
+    Result bounds(float* x, float* y, float* w, float* h, bool transform) const noexcept;
+
+
     /**
      * @brief Duplicates the object.
      *

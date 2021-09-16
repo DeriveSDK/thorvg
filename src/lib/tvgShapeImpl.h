@@ -242,7 +242,7 @@ struct Shape::Impl
         return renderer.region(rdata);
     }
 
-    bool bounds(float* x, float* y, float* w, float* h)
+    bool bounds(float* x, float* y, float* w, float* h, bool transform)
     {
         auto ret = path.bounds(x, y, w, h);
 

@@ -167,7 +167,7 @@ struct Picture::Impl
         return true;
     }
 
-    bool bounds(float* x, float* y, float* w, float* h) const
+    bool bounds(float* x, float* y, float* w, float* h, bool transform) const
     {
         if (x) *x = 0;
         if (y) *y = 0;

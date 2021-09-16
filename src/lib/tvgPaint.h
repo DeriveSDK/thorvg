@@ -42,7 +42,7 @@ namespace tvg
         virtual bool dispose(RenderMethod& renderer) = 0;
         virtual void* update(RenderMethod& renderer, const RenderTransform* transform, uint32_t opacity, Array<RenderData>& clips, RenderUpdateFlag pFlag) = 0;   //Return engine data if it has.
         virtual bool render(RenderMethod& renderer) = 0;
-        virtual bool bounds(float* x, float* y, float* w, float* h) const = 0;
+        virtual bool bounds(float* x, float* y, float* w, float* h, bool transform) const = 0;
         virtual RenderRegion bounds(RenderMethod& renderer) const = 0;
         virtual Paint* duplicate() = 0;
         virtual Iterator* iterator() = 0;
@@ -89,9 +89,9 @@ namespace tvg
             return nullptr;
         }
 
-        bool bounds(float* x, float* y, float* w, float* h) const
+        bool bounds(float* x, float* y, float* w, float* h, bool transform) const
         {
-            return smethod->bounds(x, y, w, h);
+            return smethod->bounds(x, y, w, h, transform);
         }
 
         RenderRegion bounds(RenderMethod& renderer) const
@@ -136,9 +136,9 @@ namespace tvg
         PaintMethod(T* _inst) : inst(_inst) {}
         ~PaintMethod() {}
 
-        bool bounds(float* x, float* y, float* w, float* h) const override
+        bool bounds(float* x, float* y, float* w, float* h, bool transform) const override
         {
-            return inst->bounds(x, y, w, h);
+            return inst->bounds(x, y, w, h, transform);
         }
 
         RenderRegion bounds(RenderMethod& renderer) const override

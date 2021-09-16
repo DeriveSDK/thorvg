@@ -697,7 +697,27 @@ TvgBinCounter TvgSaver::serialize(const Paint* paint, const Matrix* pTransform, 
 void TvgSaver::run(unsigned tid)
 {
     if (!writeHeader()) return;
-    if (serialize(paint, nullptr) == 0) return;
+
+    Matrix transform = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+
+    //Serialize Root Paint
+    if (paint->opacity() > 0) {
+        switch (paint->id()) {
+            case TVG_CLASS_ID_SHAPE: {
+                serializeShape(static_cast<const Shape*>(paint), nullptr, &transform);
+                break;
+            }
+            case TVG_CLASS_ID_SCENE: {
+                serializeScene(static_cast<const Scene*>(paint), nullptr, &transform);
+                break;
+            }
+            case TVG_CLASS_ID_PICTURE: {
+                serializePicture(static_cast<const Picture*>(paint), nullptr, &transform);
+                break;
+            }
+        }
+    }
+
     if (!saveEncoding(path)) return;
 }
 
@@ -736,7 +756,13 @@ bool TvgSaver::save(Paint* paint, const string& path, bool compress)
     this->path = strdup(path.c_str());
     if (!this->path) return false;
 
-    paint->bounds(nullptr, nullptr, &vsize[0], &vsize[1]);
+    //FIXME: hmm, how can we get the transformed info excluding the root?
+    float x, y;
+    paint->bounds(&x, &y, &vsize[0], &vsize[1], true);
+    vsize[0] += x;
+    vsize[1] += y;
+
+    printf("%f %f\n", vsize[0], vsize[1]);
 
     if (vsize[0] <= FLT_EPSILON || vsize[1] <= FLT_EPSILON) {
         TVGLOG("TVG_SAVER", "Saving paint(%p) has zero view size.", paint);

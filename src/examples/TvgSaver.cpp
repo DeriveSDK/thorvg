@@ -49,6 +49,8 @@ void tvgDrawStar(tvg::Shape* star)
 
 void exportTvg()
 {
+
+#if 0
     //prepare the main scene
     auto scene = tvg::Scene::gen();
 
@@ -75,6 +77,7 @@ void exportTvg()
     auto fillShape1 = tvg::LinearGradient::gen();
     fillShape1->linear(20, 120, 380, 280);
     fillShape1->colorStops(colorStops1, 3);
+
 
     auto shape1 = tvg::Shape::gen();
     shape1->appendCircle(200, 200, 180, 80);
@@ -178,6 +181,17 @@ void exportTvg()
     mask->appendCircle(400, 400, 15, 15);
     mask->fill(0, 0, 0, 255);
     scene->composite(move(mask), tvg::CompositeMethod::InvAlphaMask);
+#endif
+    //prepare the main scene
+    auto scene = tvg::Scene::gen();
+    
+        //prepare the main scene
+        auto shape1 = tvg::Shape::gen();
+        shape1->appendCircle(200, 200, 180, 80);
+        shape1->fill(255, 255, 255, 255);
+        shape1->translate(100, 100);
+
+    scene->push(move(shape1));
 
     //save the tvg file
     auto saver = tvg::Saver::gen();

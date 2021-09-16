@@ -38,12 +38,13 @@ void tvgDrawCmds(tvg::Canvas* canvas)
         return;
     }
 
-    float w, h;
+    float x, y, w, h;
     picture->size(&w, &h);
-    cout << "default tvg view size = " << w << " x " << h << endl;
-
-    picture->translate(w * 0.1f, h * 0.1f);
-    picture->size(w * 0.8f, h * 0.8f);
+    cout << "LOADER: default tvg view size = " << w << " x " << h << endl;
+    picture->bounds(&x, &y, &w, &h);
+    printf("LOADER: bound size = %f %f %f %f\n", x, y, w, h);
+    //picture->translate(w * 0.1f, h * 0.1f);
+    //picture->size(w * 0.8f, h * 0.8f);
 
     canvas->push(move(picture));
 }

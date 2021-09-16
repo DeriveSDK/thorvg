@@ -27,12 +27,20 @@
 /* Internal Class Implementation                                        */
 /************************************************************************/
 
-
-
 static inline bool FLT_SAME(float a, float b)
 {
     return (fabsf(a - b) < FLT_EPSILON);
 }
+
+
+static void _multiply(Point* pt, const Matrix* transform)
+{
+    auto tx = pt->x * transform->e11 + pt->y * transform->e12 + transform->e13;
+    auto ty = pt->x * transform->e21 + pt->y * transform->e22 + transform->e23;
+    pt->x = tx;
+    pt->y = ty;
+}
+
 
 static bool _clipPathFastTrack(Paint* cmpTarget, const RenderTransform* pTransform, RenderTransform* rTransform, RenderRegion& viewport)
 {
@@ -295,9 +303,48 @@ Matrix Paint::transform() noexcept
 
 Result Paint::bounds(float* x, float* y, float* w, float* h) const noexcept
 {
-    if (pImpl->bounds(x, y, w, h)) return Result::Success;
+    if (pImpl->bounds(x, y, w, h, false)) return Result::Success;
     return Result::InsufficientCondition;
 }
+
+
+//TODO: Move the implementaion to pImpl side.
+Result Paint::bounds(float* x, float* y, float* w, float* h, bool transform) const noexcept
+{
+    float x2 = 0;
+    float y2 = 0;
+    float w2 = 0;
+    float h2 = 0;
+
+    auto ret = pImpl->bounds(&x2, &y2, &w2, &h2, transform);
+
+    //TODO:
+    //1. Get the 4 corners and transform them,
+    //2. Figure out the bounding box based on the tranformed 4 points.
+    if (transform) {
+        auto m = pImpl->transform();
+        if (m) {
+            Point pos = {x2, y2};
+            _multiply(&pos, m);
+            if (x) *x = pos.x;
+            if (y) *y = pos.y;
+
+            Point size = {w2, h2};
+            _multiply(&size, m);
+            if (w) *w = size.x;
+            if (h) *h = size.y;
+        }
+    } else {
+        if (x) *x = x2;
+        if (y) *y = y2;
+        if (w) *w = w2;
+        if (h) *h = h2;
+    }
+
+    if (ret) return Result::Success;
+    else return Result::InsufficientCondition;
+}
+
 
 
 Paint* Paint::duplicate() const noexcept
